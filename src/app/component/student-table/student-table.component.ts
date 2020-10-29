@@ -19,7 +19,6 @@ export class StudentTableComponent implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     this._students = this.passedStudents;
     if (changes.passedStudents) {
-      console.log(`------------`);
     }
   }
 
