@@ -1,0 +1,9 @@
+<div class="studentDiv">
+  <table id="students" >
+    <tr *ngFor = "let student of students; let index = index">
+      <td *ngFor = "let column of columnTags">
+        {{student[column]}}
+      </td>
+    </tr>
+  </table>
+</div>

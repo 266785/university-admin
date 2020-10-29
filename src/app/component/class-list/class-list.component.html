@@ -1,0 +1,6 @@
+<form >
+  <select id="classSelect" [disabled]="editable"  #classSelect (change)="selectEvent(classSelect.value)" >
+    <option value="">Select Class</option>
+    <option class='option' *ngFor="let universityClass of classes" [value]="universityClass.id">{{universityClass.className}}</option>
+  </select>
+</form>
