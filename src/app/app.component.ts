@@ -1,10 +1,7 @@
-import {Component, OnChanges, OnDestroy, OnInit, SimpleChanges} from '@angular/core';
-import {FormControl} from '@angular/forms';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {AppConstants} from './utilities/constants';
 import {DataService} from './data.service';
-import {UniversityClass} from './common/models/university-class';
-import {take} from 'rxjs/operators';
-import {Observable, Subject} from 'rxjs';
+import {Subject} from 'rxjs';
 import {Student} from './common/models/student';
 
 @Component({
@@ -17,8 +14,8 @@ export class AppComponent implements OnInit, OnDestroy{
   disableEdit = true;
   _classes = AppConstants.CLASSES_MOCK_DATA;
   _students = AppConstants.STUDENTS_MOCK_DATA;
-  filteredStudents: Student[] = null;
   selectedClassId = -1;
+  student: Student = null;
   private destroy$: Subject<boolean> = new Subject<boolean>();
 
   constructor(private dataService: DataService) {
@@ -30,14 +27,9 @@ export class AppComponent implements OnInit, OnDestroy{
 
   getClass(): void{
     this.dataService.classObservable
-      .pipe(take(1))
       .subscribe((id: number) => {
         this.selectedClassId = id;
       });
-  }
-
-  showClass(): string{
-    return this._classes[this.selectedClassId] ? this._classes[this.selectedClassId].className : '';
   }
 
   ngOnDestroy(): void {
@@ -49,22 +41,34 @@ export class AppComponent implements OnInit, OnDestroy{
     return this._students;
   }
 
-  passStudents(): Student[]{
-    this.filteredStudents = this.students.filter(student => student.classId === this.selectedClassId);
-    console.log(this.filteredStudents);
-    return this.filteredStudents;
-
-  }
-
   edit(): void{
     this.disableEdit = false;
-    this.getClass();
-    this.filteredStudents = this.students.filter(student => student.classId === this.selectedClassId);
+
+    this.dataService.studentIdStateObservable
+      .subscribe((studentIdState: [number, boolean]) => {
+        if (studentIdState){
+          this.changeStudentState(studentIdState[0], studentIdState[1]);
+        }
+      });
   }
 
   save(): void{
     this.disableEdit = true;
 
+  }
+
+  changeStudentState(id: number, studentState: boolean): void{
+    this.student = this._students[id];
+    this.student.changeState(studentState);
+    this._students[id] = this.student;
+  }
+
+  filterStudentsByClass(): Student[]{
+    return this.students.filter(student => student.classId === this.selectedClassId);
+  }
+
+  filterCheckedStudents(): Student[]{
+    return this.students.filter(student => student.checked === true);
   }
 
 }

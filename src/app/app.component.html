@@ -1,9 +1,12 @@
+
 <h1>{{title}}</h1>
 <button id="editBtn" (click) = edit()>EDIT</button>
 <button id="saveBtn" (click) = save()>SAVE</button>
 
 <app-class-list [editable]="disableEdit" [classes]="_classes"></app-class-list>
-<div>
-  <p>Students of {{showClass()}}</p>
-  <app-student-table [passedStudents]=filteredStudents ></app-student-table>
+<div *ngIf="!disableEdit">
+  <app-student-table [passedStudents]=filterStudentsByClass() ></app-student-table>
+</div>
+<div *ngIf="disableEdit">
+  <app-student-table [passedStudents]=filterCheckedStudents() ></app-student-table>
 </div>

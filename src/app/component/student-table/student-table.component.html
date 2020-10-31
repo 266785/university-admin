@@ -4,6 +4,9 @@
       <td *ngFor = "let column of columnTags">
         {{student[column]}}
       </td>
+      <td>
+         Check <input type="checkbox" [(ngModel)]="student.checked" (toggle)="passState(student.id, student.checked)">
+      </td>
     </tr>
   </table>
 </div>
