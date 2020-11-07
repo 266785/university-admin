@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {AppConstants} from './utilities/constants';
 import {DataService} from './data.service';
-import {Subject} from 'rxjs';
+import {Subscription} from 'rxjs';
 import {Student} from './common/models/student';
 
 @Component({
@@ -16,7 +16,8 @@ export class AppComponent implements OnInit, OnDestroy{
   _students = AppConstants.STUDENTS_MOCK_DATA;
   selectedClassId = -1;
   student: Student = null;
-  private destroy$: Subject<boolean> = new Subject<boolean>();
+  studentSubscriptions: Subscription = new Subscription();
+  classSubscriptions: Subscription = new Subscription();
 
   constructor(private dataService: DataService) {
   }
@@ -26,15 +27,15 @@ export class AppComponent implements OnInit, OnDestroy{
     }
 
   getClass(): void{
-    this.dataService.classObservable
+    this.studentSubscriptions.add(this.dataService.classObservable
       .subscribe((id: number) => {
         this.selectedClassId = id;
-      });
+      }));
+    this.classSubscriptions.unsubscribe();
   }
 
   ngOnDestroy(): void {
-    this.destroy$.next(true);
-    this.destroy$.complete();
+    this.studentSubscriptions.unsubscribe();
   }
 
   get students(): Student[]{
@@ -43,18 +44,18 @@ export class AppComponent implements OnInit, OnDestroy{
 
   edit(): void{
     this.disableEdit = false;
-
-    this.dataService.studentIdStateObservable
+    this.classSubscriptions.add(this.dataService.studentIdStateObservable
       .subscribe((studentIdState: [number, boolean]) => {
         if (studentIdState){
           this.changeStudentState(studentIdState[0], studentIdState[1]);
         }
-      });
+      }));
   }
 
   save(): void{
     this.disableEdit = true;
-
+    this.classSubscriptions.unsubscribe();
+    this.studentSubscriptions.unsubscribe();
   }
 
   changeStudentState(id: number, studentState: boolean): void{

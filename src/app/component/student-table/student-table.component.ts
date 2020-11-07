@@ -1,18 +1,16 @@
-import {Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {Student} from '../../common/models/student';
 import {DataService} from '../../data.service';
-import {Subject} from 'rxjs';
 
 @Component({
   selector: 'app-student-table',
   templateUrl: './student-table.component.html',
   styleUrls: ['./student-table.component.css']
 })
-export class StudentTableComponent implements OnInit, OnChanges, OnDestroy {
+export class StudentTableComponent implements OnInit, OnChanges {
   @Input() passedStudents: Student[];
   private _students: Student[] = null;
   private _columnTags = ['firstName', 'lastName'];
-  private destroy$: Subject<boolean> = new Subject<boolean>();
 
   constructor(private dataService: DataService) { }
 
@@ -24,11 +22,6 @@ export class StudentTableComponent implements OnInit, OnChanges, OnDestroy {
     this._students = this.passedStudents;
     if (changes.passedStudents) {
     }
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next(true);
-    this.destroy$.complete();
   }
 
   get students(): Student[]{
