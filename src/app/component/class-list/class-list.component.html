@@ -1,5 +1,8 @@
-<form >
-  <select id="classSelect" [disabled]="editable"  #classSelect (change)="selectEvent(classSelect.value)" >
+<div [@classValidation]="isClassSelected ? 'classSelected' : 'noClassSelected'" id="classValidation">
+  <p>{{classSelect.value | classSelect}}</p>
+</div>
+<form>
+  <select  [disabled]="editable"  #classSelect (change)="selectEvent(classSelect.value)" id="classSelect">
     <option value="">Select Class</option>
     <option class='option' *ngFor="let universityClass of classes" [value]="universityClass.id">{{universityClass.className}}</option>
   </select>

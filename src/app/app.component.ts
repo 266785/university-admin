@@ -23,19 +23,15 @@ export class AppComponent implements OnInit, OnDestroy{
   }
 
   ngOnInit(): void {
-      this.getClass();
-    }
-
-  getClass(): void{
     this.studentSubscriptions.add(this.dataService.classObservable
       .subscribe((id: number) => {
         this.selectedClassId = id;
       }));
-    this.classSubscriptions.unsubscribe();
-  }
+    }
 
   ngOnDestroy(): void {
     this.studentSubscriptions.unsubscribe();
+    this.classSubscriptions.unsubscribe();
   }
 
   get students(): Student[]{
@@ -55,7 +51,6 @@ export class AppComponent implements OnInit, OnDestroy{
   save(): void{
     this.disableEdit = true;
     this.classSubscriptions.unsubscribe();
-    this.studentSubscriptions.unsubscribe();
   }
 
   changeStudentState(id: number, studentState: boolean): void{
@@ -65,7 +60,12 @@ export class AppComponent implements OnInit, OnDestroy{
   }
 
   filterStudentsByClass(): Student[]{
-    return this.students.filter(student => student.classId === this.selectedClassId);
+    if (this.selectedClassId !== -1) {
+      return this.students.filter(student => student.classId === this.selectedClassId);
+    }
+    else{
+      return [];
+    }
   }
 
   filterCheckedStudents(): Student[]{
